@@ -2,6 +2,34 @@
   <img src="https://raw.github.com/http-party/node-http-proxy/master/doc/logo.png"/>
 </p>
 
+
+```
+const http = require('http');
+const httpProxy = require('http-proxy');
+
+const proxy = httpProxy.createProxyServer({});
+
+// 正向代理服务器监听的端口
+const proxyPort = 8080;
+
+const server = http.createServer((req, res) => {
+  // 从客户端请求中获取目标服务器的URL
+  const targetHost = req.url;
+
+  proxy.web(req, res, { target: targetHost }, (error, req, res, target) => {
+    if (error) {
+      console.error('Proxy error:', error);
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('An error occurred while proxying the request.');
+    }
+  });
+});
+
+server.listen(proxyPort, () => {
+  console.log(`Forward proxy server listening on port ${proxyPort}`);
+});
+```
+
 # node-http-proxy [![Build Status](https://travis-ci.org/http-party/node-http-proxy.svg?branch=master)](https://travis-ci.org/http-party/node-http-proxy) [![codecov](https://codecov.io/gh/http-party/node-http-proxy/branch/master/graph/badge.svg)](https://codecov.io/gh/http-party/node-http-proxy)
 
 `node-http-proxy` is an HTTP programmable proxying library that supports
